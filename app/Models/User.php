@@ -56,6 +56,12 @@ class User extends Authenticatable
         'profile_photo_url',
     ];
 
+
+    public function cvs()
+{
+    return $this->hasMany(Cv::class);
+}
+
     /**
      * Get the attributes that should be cast.
      *

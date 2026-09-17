@@ -15,6 +15,11 @@ return new class extends Migration
                 ->constrained()
                 ->cascadeOnDelete();
 
+            $table->foreignId('cv_id')
+                ->nullable()
+                ->constrained('cvs')
+                ->cascadeOnDelete();
+
             $table->string('education_level');
             $table->string('institution');
             $table->string('program')->nullable();

@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('experiences', function (Blueprint $table) {
+        Schema::create('languages', function (Blueprint $table) {
             $table->id();
 
             $table->foreignId('user_id')
@@ -20,17 +20,9 @@ return new class extends Migration
                 ->constrained('cvs')
                 ->cascadeOnDelete();
 
-            $table->string('job_title');
-            $table->string('company');
-            $table->string('location')->nullable();
-
-            $table->date('start_date');
-            $table->date('end_date')->nullable();
-
-            $table->boolean('is_current')->default(false);
-
-            $table->text('description')->nullable();
-            $table->text('achievements')->nullable();
+            $table->string('language');
+            $table->string('proficiency')->nullable();
+            $table->unsignedTinyInteger('percentage')->nullable();
 
             $table->timestamps();
         });
@@ -38,6 +30,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('experiences');
+        Schema::dropIfExists('languages');
     }
 };
