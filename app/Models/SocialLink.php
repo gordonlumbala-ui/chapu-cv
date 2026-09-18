@@ -6,27 +6,23 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Education extends Model
+class SocialLink extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'user_id',
         'cv_id',
-        'education_level',
-        'institution',
-        'program',
-        'field_of_study',
-        'start_date',
-        'end_date',
-        'grade',
-        'certificate',
-        'description',
+        'platform',
+        'username',
+        'url',
+        'display_order',
+        'is_visible',
     ];
 
     protected $casts = [
-        'start_date' => 'date',
-        'end_date' => 'date',
+        'display_order' => 'integer',
+        'is_visible' => 'boolean',
     ];
 
     public function user(): BelongsTo

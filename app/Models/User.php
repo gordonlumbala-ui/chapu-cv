@@ -62,6 +62,46 @@ class User extends Authenticatable
     return $this->hasMany(Cv::class);
 }
 
+public function educations()
+{
+    return $this->hasMany(Education::class);
+}
+
+public function experiences()
+{
+    return $this->hasMany(Experience::class);
+}
+
+public function skills()
+{
+    return $this->hasMany(Skill::class);
+}
+
+public function projects()
+{
+    return $this->hasMany(Project::class);
+}
+
+public function certifications()
+{
+    return $this->hasMany(Certification::class);
+}
+
+public function languages()
+{
+    return $this->hasMany(Language::class);
+}
+
+public function references()
+{
+    return $this->hasMany(Reference::class);
+}
+
+public function socialLinks()
+{
+    return $this->hasMany(SocialLink::class);
+}
+
     /**
      * Get the attributes that should be cast.
      *

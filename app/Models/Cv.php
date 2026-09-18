@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+
 class Cv extends Model
 {
     use HasFactory;
@@ -37,6 +38,11 @@ class Cv extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function socialLinks(): HasMany
+{
+    return $this->hasMany(SocialLink::class);
+}
 
     /**
      * CV template.

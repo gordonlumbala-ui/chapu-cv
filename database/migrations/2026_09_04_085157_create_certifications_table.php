@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('experiences', function (Blueprint $table) {
+        Schema::create('certifications', function (Blueprint $table) {
             $table->id();
 
             $table->foreignId('user_id')
@@ -20,17 +20,28 @@ return new class extends Migration
                 ->constrained('cvs')
                 ->cascadeOnDelete();
 
-            $table->string('job_title');
-            $table->string('company');
-            $table->string('location')->nullable();
+            $table->string('name');
 
-            $table->date('start_date');
-            $table->date('end_date')->nullable();
+            $table->string('issuing_organization')
+                ->nullable();
 
-            $table->boolean('is_current')->default(false);
+            $table->string('credential_id')
+                ->nullable();
 
-            $table->text('description')->nullable();
-            $table->text('achievements')->nullable();
+            $table->string('credential_url')
+                ->nullable();
+
+            $table->date('issue_date')
+                ->nullable();
+
+            $table->date('expiry_date')
+                ->nullable();
+
+            $table->boolean('does_not_expire')
+                ->default(false);
+
+            $table->text('description')
+                ->nullable();
 
             $table->timestamps();
         });
@@ -38,6 +49,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('experiences');
+        Schema::dropIfExists('certifications');
     }
 };
