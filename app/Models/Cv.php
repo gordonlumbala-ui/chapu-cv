@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-
 class Cv extends Model
 {
     use HasFactory;
@@ -39,11 +38,6 @@ class Cv extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function socialLinks(): HasMany
-{
-    return $this->hasMany(SocialLink::class);
-}
-
     /**
      * CV template.
      */
@@ -52,60 +46,75 @@ class Cv extends Model
         return $this->belongsTo(CvTemplate::class, 'cv_template_id');
     }
 
-    /**
-     * Education records.
-     */
+    
     public function educations(): HasMany
     {
         return $this->hasMany(Education::class);
     }
 
-    /**
-     * Experience records.
-     */
+   
     public function experiences(): HasMany
     {
         return $this->hasMany(Experience::class);
     }
 
-    /**
-     * Skills attached to this CV.
-     */
+  
     public function skills(): BelongsToMany
     {
         return $this->belongsToMany(Skill::class, 'cv_skills')
             ->withTimestamps();
     }
 
-    /**
-     * Projects.
-     */
+   
     public function projects(): HasMany
     {
         return $this->hasMany(Project::class);
     }
 
-    /**
-     * Certifications.
-     */
     public function certifications(): HasMany
     {
         return $this->hasMany(Certification::class);
     }
 
-    /**
-     * Languages.
-     */
+
     public function languages(): HasMany
     {
         return $this->hasMany(Language::class);
     }
 
-    /**
-     * References.
-     */
+
     public function references(): HasMany
     {
         return $this->hasMany(Reference::class);
+    }
+
+    /**
+     * Social links.
+     */
+    public function socialLinks(): HasMany
+    {
+        return $this->hasMany(SocialLink::class);
+    }
+
+    public function sections(): HasMany
+    {
+        return $this->hasMany(CvSection::class);
+    }
+
+ 
+    public function publicProfiles(): HasMany
+    {
+        return $this->hasMany(PublicProfile::class);
+    }
+
+    public function qrCodes(): HasMany
+    {
+        return $this->hasMany(QRCode::class);
+    }
+
+ 
+    public function downloads(): HasMany
+    {
+        return $this->hasMany(CvDownload::class);
     }
 }

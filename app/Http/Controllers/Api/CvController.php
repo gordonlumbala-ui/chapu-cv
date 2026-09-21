@@ -3,141 +3,156 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\CvResource;
 use App\Models\Cv;
-use Illuminate\Http\JsonResponse;
+use App\Models\CvTemplate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class CvController extends Controller
 {
-    public function index(Request $request): JsonResponse
+    public function index(Request $request)
     {
-        $cvs = Cv::where('user_id', $request->user()->id)
+        $cvs = $request->user()
+            ->cvs()
             ->with('template')
             ->latest()
             ->get();
 
-        return response()->json([
-            'success' => true,
-            'data' => $cvs,
-        ]);
+        return CvResource::collection($cvs);
     }
 
-    public function show(Request $request, Cv $cv): JsonResponse
-    {
-        $this->authorizeCv($request, $cv);
-
-        $cv->load([
-            'template',
-            'educations',
-            'experiences',
-            'skills',
-            'projects',
-            'certifications',
-            'languages',
-            'references',
-        ]);
-
-        return response()->json([
-            'success' => true,
-            'data' => [
-                'cv' => $cv,
-                'completion' => $this->cvCompletion($cv),
-            ],
-        ]);
-    }
-
-    public function store(Request $request): JsonResponse
+    public function store(Request $request)
     {
         $validated = $request->validate([
+            'cv_template_id' => [
+                'required',
+                'integer',
+                Rule::exists('cv_templates', 'id')
+                    ->where('is_active', true),
+            ],
             'title' => ['required', 'string', 'max:255'],
             'cv_type' => [
                 'required',
-                'string',
-                'in:professional,student,graduate,academic,technical,creative,internship,international',
+                Rule::in([
+                    'professional',
+                    'academic',
+                    'technical',
+                    'job',
+                    'custom',
+                ]),
             ],
-            'description' => ['nullable', 'string', 'max:2000'],
-            'cv_template_id' => ['nullable', 'exists:cv_templates,id'],
-            'is_default' => ['nullable', 'boolean'],
-            'is_public' => ['nullable', 'boolean'],
+            'description' => ['nullable', 'string'],
+            'is_default' => ['sometimes', 'boolean'],
+            'is_public' => ['sometimes', 'boolean'],
         ]);
 
         $user = $request->user();
 
-        if ($request->boolean('is_default')) {
-            Cv::where('user_id', $user->id)
-                ->update(['is_default' => false]);
+        if (! empty($validated['is_default']) && $validated['is_default']) {
+            $user->cvs()->update(['is_default' => false]);
         }
 
-        $cv = Cv::create([
-            'user_id' => $user->id,
-            'cv_template_id' => $validated['cv_template_id'] ?? null,
+        $cv = $user->cvs()->create([
+            'cv_template_id' => $validated['cv_template_id'],
             'title' => $validated['title'],
-            'slug' => $this->generateUniqueSlug($validated['title']),
+            'slug' => Str::slug($validated['title']) . '-' . Str::lower(Str::random(6)),
             'cv_type' => $validated['cv_type'],
             'description' => $validated['description'] ?? null,
-            'is_default' => $request->boolean('is_default'),
-            'is_public' => $request->boolean('is_public'),
+            'is_default' => $validated['is_default'] ?? false,
+            'is_public' => $validated['is_public'] ?? false,
             'is_active' => true,
         ]);
 
         $cv->load('template');
 
-        return response()->json([
-            'success' => true,
-            'message' => 'CV created successfully.',
-            'data' => $cv,
-        ], 201);
+        return (new CvResource($cv))
+            ->additional([
+                'success' => true,
+                'message' => 'CV created successfully.',
+            ])
+            ->response()
+            ->setStatusCode(201);
     }
 
-    public function update(Request $request, Cv $cv): JsonResponse
+    public function show(Request $request, Cv $cv)
     {
-        $this->authorizeCv($request, $cv);
-
-        $validated = $request->validate([
-            'title' => ['required', 'string', 'max:255'],
-            'cv_type' => [
-                'required',
-                'string',
-                'in:professional,student,graduate,academic,technical,creative,internship,international',
-            ],
-            'description' => ['nullable', 'string', 'max:2000'],
-            'cv_template_id' => ['nullable', 'exists:cv_templates,id'],
-            'is_default' => ['nullable', 'boolean'],
-            'is_public' => ['nullable', 'boolean'],
-            'is_active' => ['nullable', 'boolean'],
-        ]);
-
-        if ($request->boolean('is_default')) {
-            Cv::where('user_id', $request->user()->id)
-                ->where('id', '!=', $cv->id)
-                ->update(['is_default' => false]);
+        if ($cv->user_id !== $request->user()->id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'CV not found.',
+            ], 404);
         }
-
-        $cv->update([
-            'cv_template_id' => $validated['cv_template_id'] ?? null,
-            'title' => $validated['title'],
-            'cv_type' => $validated['cv_type'],
-            'description' => $validated['description'] ?? null,
-            'is_default' => $request->boolean('is_default'),
-            'is_public' => $request->boolean('is_public'),
-            'is_active' => $request->has('is_active')
-                ? $request->boolean('is_active')
-                : $cv->is_active,
-        ]);
 
         $cv->load('template');
 
-        return response()->json([
-            'success' => true,
-            'message' => 'CV updated successfully.',
-            'data' => $cv,
-        ]);
+        return new CvResource($cv);
     }
 
-    public function destroy(Request $request, Cv $cv): JsonResponse
+    public function update(Request $request, Cv $cv)
     {
-        $this->authorizeCv($request, $cv);
+        if ($cv->user_id !== $request->user()->id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'CV not found.',
+            ], 404);
+        }
+
+        $validated = $request->validate([
+            'cv_template_id' => [
+                'sometimes',
+                'integer',
+                Rule::exists('cv_templates', 'id')
+                    ->where('is_active', true),
+            ],
+            'title' => ['sometimes', 'required', 'string', 'max:255'],
+            'cv_type' => [
+                'sometimes',
+                'required',
+                Rule::in([
+                    'professional',
+                    'academic',
+                    'technical',
+                    'job',
+                    'custom',
+                ]),
+            ],
+            'description' => ['nullable', 'string'],
+            'is_default' => ['sometimes', 'boolean'],
+            'is_public' => ['sometimes', 'boolean'],
+            'is_active' => ['sometimes', 'boolean'],
+        ]);
+
+        if (($validated['is_default'] ?? false) === true) {
+            $request->user()
+                ->cvs()
+                ->whereKeyNot($cv->id)
+                ->update(['is_default' => false]);
+        }
+
+        if (isset($validated['title']) && $validated['title'] !== $cv->title) {
+            $validated['slug'] = Str::slug($validated['title']) . '-' . Str::lower(Str::random(6));
+        }
+
+        $cv->update($validated);
+        $cv->load('template');
+
+        return (new CvResource($cv))
+            ->additional([
+                'success' => true,
+                'message' => 'CV updated successfully.',
+            ]);
+    }
+
+    public function destroy(Request $request, Cv $cv)
+    {
+        if ($cv->user_id !== $request->user()->id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'CV not found.',
+            ], 404);
+        }
 
         $cv->delete();
 
@@ -145,105 +160,5 @@ class CvController extends Controller
             'success' => true,
             'message' => 'CV deleted successfully.',
         ]);
-    }
-
-    public function duplicate(Request $request, Cv $cv): JsonResponse
-    {
-        $this->authorizeCv($request, $cv);
-
-        $newTitle = $cv->title . ' Copy';
-
-        $newCv = $cv->replicate();
-        $newCv->title = $newTitle;
-        $newCv->slug = $this->generateUniqueSlug($newTitle);
-        $newCv->is_default = false;
-        $newCv->is_public = false;
-        $newCv->is_active = true;
-        $newCv->save();
-
-        $newCv->load('template');
-
-        return response()->json([
-            'success' => true,
-            'message' => 'CV duplicated successfully.',
-            'data' => $newCv,
-        ], 201);
-    }
-
-    public function setDefault(Request $request, Cv $cv): JsonResponse
-    {
-        $this->authorizeCv($request, $cv);
-
-        Cv::where('user_id', $request->user()->id)
-            ->update(['is_default' => false]);
-
-        $cv->update([
-            'is_default' => true,
-        ]);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Default CV updated successfully.',
-            'data' => $cv,
-        ]);
-    }
-
-    public function togglePublic(Request $request, Cv $cv): JsonResponse
-    {
-        $this->authorizeCv($request, $cv);
-
-        $cv->update([
-            'is_public' => !$cv->is_public,
-        ]);
-
-        return response()->json([
-            'success' => true,
-            'message' => $cv->is_public
-                ? 'CV is now public.'
-                : 'CV is now private.',
-            'data' => $cv,
-        ]);
-    }
-
-    private function cvCompletion(Cv $cv): int
-    {
-        $sections = [
-            $cv->educations()->exists(),
-            $cv->experiences()->exists(),
-            $cv->skills()->exists(),
-            $cv->projects()->exists(),
-            $cv->certifications()->exists(),
-            $cv->languages()->exists(),
-            $cv->references()->exists(),
-        ];
-
-        $completed = collect($sections)->filter()->count();
-
-        return (int) round(
-            ($completed / count($sections)) * 100
-        );
-    }
-
-    private function authorizeCv(Request $request, Cv $cv): void
-    {
-        abort_unless(
-            $cv->user_id === $request->user()->id,
-            403,
-            'You are not authorized to access this CV.'
-        );
-    }
-
-    private function generateUniqueSlug(string $title): string
-    {
-        $baseSlug = Str::slug($title);
-        $slug = $baseSlug;
-        $counter = 1;
-
-        while (Cv::where('slug', $slug)->exists()) {
-            $slug = $baseSlug . '-' . $counter;
-            $counter++;
-        }
-
-        return $slug;
     }
 }

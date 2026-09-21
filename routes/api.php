@@ -23,4 +23,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/profile', [ProfileController::class, 'update']);
 
     Route::delete('/profile', [ProfileController::class, 'deactivate']);
+    
 });

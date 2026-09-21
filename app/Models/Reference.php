@@ -6,20 +6,20 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Language extends Model
+class Reference extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'user_id',
         'cv_id',
-        'language',
-        'proficiency',
-        'percentage',
-    ];
-
-    protected $casts = [
-        'percentage' => 'integer',
+        'name',
+        'position',
+        'organization',
+        'relationship',
+        'email',
+        'phone',
+        'address',
     ];
 
     public function user(): BelongsTo

@@ -22,7 +22,7 @@ return new class extends Migration
 
             $table->string('platform');
             $table->string('username')->nullable();
-            $table->string('url');
+            $table->string('url')->nullable();
 
             $table->unsignedInteger('display_order')->default(0);
             $table->boolean('is_visible')->default(true);
