@@ -1,886 +1,493 @@
-CHAPU-CV — Updated 30 Day Development Blueprint
-CHAPU-CV — 30 DAY DEVELOPMENT BLUEPRINT
-Project Goal
+# CHAPU-CV — Updated 30 Day Development Blueprint
 
-Build and deploy a functional Smart CV & Resume Generation Platform in 30 days using:
+**Project Goal:** Build and deploy a functional Smart CV & Resume Generation Platform in 30 days.
 
-Laravel
-MySQL
-Livewire
-Blade
-Jetstream
-Tailwind CSS
-PDF generation
-QR Code generation
-WEEK 1 — FOUNDATION & USER PROFILE
-DAY 1 — Project Foundation
+## Stack
 
-Confirm Laravel project structure
+| Layer | Technology |
+|-------|------------|
+| Backend | Laravel 12, MySQL / SQLite, Sanctum |
+| Shared logic | `app/Engines/` (API + web) |
+| Web UI | Livewire, Blade, Jetstream, Tailwind / Metronic |
+| Mobile | Flutter (`Chapu_cv_mobile`) — Android, iOS, Web |
+| Extras | PDF generation, QR codes |
 
-Confirm database connection
+## Progress legend
 
-Confirm migrations
+- `[x]` Done
+- `[~]` Partial / backend done, UI pending
+- `[ ]` Not started
 
-Confirm seeders
+---
 
-Confirm authentication
+# WEEK 1 — FOUNDATION & USER PROFILE
 
-Confirm user roles
+## DAY 1 — Project Foundation
 
-Create basic application layout
+- [x] Confirm Laravel project structure
+- [x] Confirm database connection (MySQL / SQLite)
+- [x] Confirm migrations
+- [x] Confirm seeders
+- [x] Confirm authentication (Jetstream / Fortify / Sanctum)
+- [x] Confirm user roles (`admin`, `client`, `guest`)
+- [~] Create basic application layout (Metronic layouts exist; polish pending)
+- [x] Confirm dashboard routes work (role-based views)
+- [x] Create shared **Engines** layer for domain logic
 
-Confirm dashboard works
+**Deliverable:** Working authenticated Laravel application.  
+**Status:** ✅ Foundation + Engines complete; web UI polish pending.
 
-Deliverable: Working authenticated Laravel application.
+---
 
-Status: 🟡 Backend foundation complete; UI foundation pending.
+## DAY 2 — User Dashboard
 
-DAY 2 — User Dashboard
+- [~] Build client dashboard (shell exists)
+- [~] Build navigation/sidebar (client layout exists; links mostly placeholders)
+- [~] Add dashboard cards
+- [ ] Add quick actions wired to real routes
+- [ ] Add CV statistics from Engines / analytics
 
-Build client dashboard
+**Deliverable:** Functional client dashboard.  
+**Status:** 🟡 Shell exists; live data & navigation pending.
 
-Build navigation/sidebar
+---
 
-Add dashboard cards
+## DAY 3 — Profile Management
 
-Add quick actions
+- [x] User/profile database foundation (profile fields migration)
+- [x] Profile **Engine** (`ProfileEngine`)
+- [x] Profile API controller (show / update / deactivate)
+- [x] Profile web controller (backend only — no new views owned here)
+- [x] Save / edit profile via API
+- [~] Create profile page / form (Jetstream + custom `profile.show` exist)
+- [~] Display profile information
+- [~] Add profile photo support (Jetstream)
 
-Add CV statistics
+**Deliverable:** Complete user profile module.  
+**Status:** ✅ Backend (Engine + API + web controller) done; UI polish pending.
 
-Deliverable: Functional client dashboard.
+---
 
-Status: ⬜ Not started.
+## DAY 4 — Education
 
-DAY 3 — Profile Management
+- [x] Education migration
+- [x] Education model + relationships
+- [x] Education seeder + factory
+- [x] Education API Resource
+- [x] Education **Engine**
+- [x] Education API controller (uses Engine)
+- [x] Education web controller (backend only)
+- [x] API routes registered
+- [ ] Education web/Livewire UI (add / edit / delete / validation)
 
-User/profile database foundation
+**Deliverable:** Complete education management.  
+**Status:** ✅ Backend complete; web frontend pending. Mobile syncs education text via Engine.
 
-Create profile page
+---
 
-Create profile form
+## DAY 5 — Experience
 
-Save profile information
+- [x] Experience migration
+- [x] Experience model + relationships
+- [x] Experience seeder + factory
+- [x] Experience API Resource
+- [x] Experience **Engine**
+- [x] Experience API controller
+- [x] Experience web controller (backend only)
+- [x] API routes registered
+- [ ] Experience web/Livewire UI
+- [ ] Current job UI
 
-Edit profile information
+**Deliverable:** Complete experience management.  
+**Status:** ✅ Backend complete; web frontend pending. Mobile syncs experience via Engine.
 
-Display profile information
+---
 
-Add profile photo support
+## DAY 6 — Skills
 
-Deliverable: Complete user profile module.
+- [x] Skills migration + `cv_skills` pivot
+- [x] Skill model + relationships
+- [x] Skill seeder + factory
+- [x] Skill API Resource
+- [x] Skill **Engine**
+- [x] Skill API controller
+- [x] Skill web controller (backend only)
+- [x] API routes registered
+- [ ] Skills web/Livewire UI (level / percentage / categories)
 
-Status: 🟡 Backend foundation exists; UI/module pending.
+**Deliverable:** Complete skills management.  
+**Status:** ✅ Backend complete; web frontend pending. Mobile syncs comma-separated skills via Engine.
 
-DAY 4 — Education
+---
 
-Education migration
+## DAY 7 — Projects
 
-Education model
+- [x] Projects migration
+- [x] Project model + relationships
+- [x] Project seeder + factory
+- [x] Project API Resource
+- [x] Project **Engine**
+- [x] Project API controller
+- [x] Project web controller (backend only)
+- [x] API routes registered
+- [ ] Projects web/Livewire UI (technologies / URLs / current)
 
-Education relationship
+**Deliverable:** Complete project management.  
+**Status:** ✅ Backend complete; web frontend pending.
 
-Education seeder
+---
 
-Education factory
+# WEEK 2 — PROFESSIONAL INFORMATION & CV SYSTEM
 
-Education API Resource
+## DAY 8 — Certifications
 
-Education API Controller
+- [x] Certification migration / model / relationships
+- [x] Certification seeder + factory
+- [x] Certification API Resource
+- [x] Certification **Engine**
+- [x] Certification API + web controllers
+- [x] API routes registered
+- [ ] Certification web UI (credential / expiry)
 
-Education web/Livewire interface
+**Status:** ✅ Backend complete; frontend pending.
 
-Add education UI
+---
 
-Edit education UI
+## DAY 9 — Languages & References
 
-Delete education UI
+### Languages
 
-Validation UI
+- [x] Language migration / model / relationships
+- [x] Language seeder + factory
+- [x] Language API Resource
+- [x] Language **Engine**
+- [x] Language API + web controllers
+- [x] API routes registered
+- [ ] Language web UI
 
-Deliverable: Complete education management.
+### References
 
-Status: 🟡 Backend complete; frontend pending.
+- [x] Reference migration / model / relationships
+- [x] Reference seeder + factory
+- [ ] Reference API Resource
+- [ ] Reference Engine
+- [ ] Reference API + web controllers
+- [ ] Reference web UI
 
-DAY 5 — Experience
+**Status:** ✅ Languages backend done. 🟡 References DB only.
 
-Experience migration
+---
 
-Experience model
+## DAY 10 — CV Management
 
-Experience relationship
+- [x] CV migration / model / relationships
+- [x] CV seeder + factory
+- [x] CV API Resource
+- [x] CV **Engine** (create / update / delete / duplicate / default / public)
+- [x] CV API controller
+- [x] CV web controller (backend; views not owned yet)
+- [x] API + web resource routes
+- [ ] Create / edit / delete / view CV UI
+- [ ] CV title / type / default / active UI
 
-Experience seeder
+**Status:** ✅ Backend complete; web frontend pending.
 
-Experience factory
+---
 
-Experience API Resource
+## DAY 11 — CV Templates
 
-Experience API Controller
+- [x] Template migration / model / seeder / factory
+- [x] Template API Resource
+- [x] Template **Engine**
+- [x] Template API + web controllers
+- [x] API + web routes
+- [ ] Template listing / selection / preview UI
+- [ ] Admin template management UI
 
-Experience web/Livewire interface
+**Status:** ✅ Backend complete; frontend pending.
 
-Add experience UI
+---
 
-Edit experience UI
+## DAY 12 — CV Sections
 
-Delete experience UI
+- [x] CV sections migration / model / seeder
+- [ ] CV Section API Resource / Engine / controllers
+- [ ] Create / show-hide / order sections UI
 
-Current job UI
+**Status:** 🟡 Database/model foundation exists.
 
-Validation UI
+---
 
-Deliverable: Complete experience management.
+## DAY 13 — CV Builder (Web) + Mobile CV Sync
 
-Status: 🟡 Backend complete; frontend pending.
+### Web builder
 
-DAY 6 — Skills
+- [ ] Build CV editor UI
+- [ ] Connect profile / education / experience / skills / projects / certifications / references
 
-Skills migration
+### Flutter mobile (attached to Engines via API)
 
-Skill model
+- [x] Scaffold Flutter app (`Chapu_cv_mobile`)
+- [x] App theme, landing, get-started, home, contact
+- [x] Local CV draft (`CvStore` + SharedPreferences)
+- [x] HTTP `ApiClient` + Sanctum token auth
+- [x] Login / register / logout screens
+- [x] `POST /api/register`, `POST /api/login`, `POST /api/logout`
+- [x] `MobileCvSyncEngine` + `GET/POST /api/mobile/cv*`
+- [x] Create/edit CV form syncs to Engines (profile + CV + education/experience/skills)
+- [x] Pull CV from API after login
+- [x] Preview CV + QR share screens
+- [x] Run on Flutter **web** against local API (`http://127.0.0.1:8000/api`)
 
-Skill relationship
+**Deliverable:** Functional CV builder (web) + mobile sync to backend.  
+**Status:** ✅ Mobile ↔ Engine API done. ⬜ Web builder UI pending.
 
-Skill seeder
+---
 
-Skill factory
+## DAY 14 — CV Builder Polish
 
-Skill API Resource
+- [ ] Improve web CV builder UI
+- [ ] Section navigation / reorder / validation
+- [~] Mobile form UX polish (basic done; structured section editors later)
+- [ ] Error handling across web + mobile
 
-Skill API Controller
+**Status:** 🟡 Mobile usable; web polish pending.
 
-Skills web/Livewire interface
+---
 
-Add skill UI
+# WEEK 3 — CV OUTPUT, PRIVACY & PUBLIC PROFILES
 
-Edit skill UI
+## DAY 15–17 — Templates, Preview
 
-Delete skill UI
+- [ ] Build Professional / Modern / Classic Blade templates
+- [ ] Connect database data dynamically
+- [~] Mobile CV preview (local layout exists; not template-driven from server)
+- [ ] Web preview page + template switching
 
-Skill level UI
+**Status:** ⬜ Web templates pending. 🟡 Mobile preview exists.
 
-Skill percentage UI
+---
 
-Skill categories UI
+## DAY 18 — PDF Generation
 
-Deliverable: Complete skills management.
+- [ ] Install/configure PDF generator
+- [ ] Convert CV preview to PDF + download
+- [ ] Test one-page / multi-page CV
+- [ ] Optional: mobile download PDF via API
 
-Status: 🟡 Backend complete; frontend pending.
+**Status:** ⬜ Not started.
 
-DAY 7 — Projects
+---
 
-Projects migration
+## DAY 19 — Download Tracking
 
-Project model
+- [x] Download tracking migration / model
+- [x] Seeder foundation
+- [ ] Record downloads + display statistics UI
 
-Project relationship
+**Status:** 🟡 Database/model foundation complete.
 
-Project seeder
+---
 
-Project factory
+## DAY 20 — Privacy Settings
 
-Project API Resource
+- [x] Privacy settings migration / model / fields
+- [ ] Privacy settings page + apply rules to public CV
 
-Project API Controller
+**Status:** 🟡 Backend foundation complete; UI and integration pending.
 
-Projects web/Livewire interface
+---
 
-Add project UI
+## DAY 21 — Public CV Profiles
 
-Edit project UI
+- [x] Public profiles migration / model
+- [ ] Publish CV / public slug page / activate-deactivate
 
-Delete project UI
+**Status:** 🟡 Database/model foundation complete.
 
-Technologies UI
+---
 
-GitHub/project URLs UI
+# WEEK 4 — QR, ANALYTICS, ADMIN & FINALIZATION
 
-Current project UI
+## DAY 22–24 — QR & Analytics
 
-Deliverable: Complete project management.
+- [x] QR / QR scan / profile view migrations & models + seeders
+- [~] Mobile QR screen (local payload; not yet tied to public profile URL)
+- [ ] Generate QR image / download / redirect / analytics cards
 
-Status: 🟡 Backend complete; frontend pending.
+**Status:** 🟡 DB foundation + mobile QR draft. Integration pending.
 
-WEEK 2 — PROFESSIONAL INFORMATION & CV SYSTEM
-DAY 8 — Certifications
+---
 
-Certification migration
+## DAY 25–26 — Admin
 
-Certification model
+- [~] Admin dashboard shell
+- [ ] User / CV / template / public profile management
 
-Certification relationship
+**Status:** 🟡 Shell only.
 
-Certification seeder
+---
 
-Certification factory
+## DAY 27 — Smart CV Features
 
-Certification API Resource
+- [ ] Summary / experience / skill suggestions
+- [ ] Job-targeted CV concept
 
-Certification API Controller
+**Status:** ⬜ Not started.
 
-Certification web/Livewire interface
+---
 
-Add certification UI
+## DAY 28 — Security & Validation
 
-Edit certification UI
+- [x] API ownership checks (Engines `OwnsResource`)
+- [x] API validation (Engines + Form validation)
+- [x] API JSON exception handling (`bootstrap/app.php`)
+- [x] Sanctum authentication (token for Flutter)
+- [~] Review web authorization / ownership
+- [ ] Review file uploads / rate limiting
+- [ ] Full security review
 
-Delete certification UI
+**Status:** 🟡 Core API security in place; full review pending.
 
-Credential information UI
+---
 
-Expiry handling UI
+## DAY 29 — Testing & UI Polish
 
-Deliverable: Complete certification management.
+- [x] Smoke-test API login + mobile CV sync
+- [x] Flutter analyze (lib) clean
+- [ ] Full regression: registration, profile, sections, CV, PDF, QR, analytics
+- [ ] Responsive web polish
 
-Status: 🟡 Backend complete; frontend pending.
+**Status:** 🟡 Partial smoke tests done.
 
-DAY 9 — References
+---
 
-Reference migration
+## DAY 30 — Deployment & Final Release
 
-Reference model
+- [ ] Production config, SSL, domain, backups
+- [ ] Deploy Laravel API + web
+- [ ] Publish Flutter app (Play Store / App Store / PWA)
+- [ ] Final documentation
 
-Reference relationship
+**Status:** ⬜ Not started.
 
-Reference seeder
+---
 
-Reference factory
+# CURRENT BACKEND CHECKPOINT
 
-Reference API Resource
+Completed foundation:
 
-Reference API Controller
+- [x] Laravel 12 project
+- [x] Database migrations (including user profile fields)
+- [x] Models + relationships
+- [x] Seeders + required factories
+- [x] Helpers
+- [x] Sanctum authentication
+- [x] API exception handling
+- [x] API Resources
+- [x] Shared **Engines** (`Cv`, `Profile`, `Education`, `Experience`, `Skill`, `Project`, `Certification`, `Language`, `CvTemplate`, `MobileCvSync`)
+- [x] API Controllers wired to Engines
+- [x] Web Controllers wired to Engines (backend only — views deferred)
+- [x] API routes for auth, profile, CV resources, templates, mobile sync
+- [x] Web resource routes registered
+- [x] Flutter mobile app connected to Engines via API
+- [x] Flutter web run against local API
 
-Reference web/Livewire interface
+---
 
-Add reference UI
+# FLUTTER MOBILE CHECKPOINT
 
-Edit reference UI
+App path: `Chapu_cv_mobile/`
 
-Delete reference UI
+| Feature | Status |
+|---------|--------|
+| Landing / get started / home / contact | Done |
+| Auth (login / register / logout) | Done |
+| CV create/edit → `POST /api/mobile/cv/sync` | Done |
+| Load CV → `GET /api/mobile/cv` | Done |
+| Preview + local QR | Done |
+| Android / Chrome web run | Done |
+| Structured section editors on mobile | Pending |
+| Public profile / server QR URL | Pending |
+| PDF download from mobile | Pending |
 
-Validation UI
+**Seeded test account**
 
-Deliverable: Complete reference management.
+```text
+client@chapcv.com
+12345678
+```
 
-Status: 🟡 Database/model/seeder foundation exists; API and UI pending.
+**Local run**
 
-DAY 10 — CV Management
+```bash
+# API
+php artisan serve --host=127.0.0.1 --port=8000
 
-CV migration
+# Flutter web
+cd Chapu_cv_mobile
+flutter run -d chrome --web-hostname=127.0.0.1 --web-port=5555
+```
 
-CV model
+API base URL defaults to `http://127.0.0.1:8000/api` on web/desktop and `http://10.0.2.2:8000/api` on Android emulator.
 
-CV relationships
+---
 
-CV seeder
+# NEXT DEVELOPMENT PHASE
 
-CV factory
-
-CV API Resource
-
-CV API Controller
-
-Create CV UI
-
-Edit CV UI
-
-Delete CV UI
-
-View CV UI
-
-CV title UI
-
-CV type UI
-
-Default CV UI
-
-Active/inactive CV UI
-
-Deliverable: User can create and manage multiple CVs.
-
-Status: 🟡 Backend complete; frontend pending.
-
-DAY 11 — CV Templates
-
-Template migration
-
-Template model
-
-Template seeder
-
-Template factory
-
-Template API Resource
-
-Template API Controller
-
-Template listing UI
-
-Template selection UI
-
-Template preview
-
-Activate/deactivate templates UI
-
-Admin template management
-
-Deliverable: Working template selection system.
-
-Status: 🟡 Backend complete; frontend pending.
-
-DAY 12 — CV Sections
-
-CV sections migration
-
-CV Section model
-
-CV Section seeder
-
-CV Section API Resource
-
-CV Section API Controller
-
-Create CV sections UI
-
-Select sections
-
-Show/hide sections
-
-Section titles
-
-Section ordering
-
-Deliverable: User can control CV sections.
-
-Status: 🟡 Database/model foundation exists.
-
-DAY 13 — CV Builder
-
-Build CV editor
-
-Connect profile data
-
-Connect education
-
-Connect experience
-
-Connect skills
-
-Connect projects
-
-Connect certifications
-
-Connect references
-
-Deliverable: Functional CV builder.
-
-Status: ⬜ Not started.
-
-DAY 14 — CV Builder Polish
-
-Improve CV builder UI
-
-Section navigation
-
-Save changes
-
-Reorder sections
-
-Validation
-
-Error handling
-
-Deliverable: Stable and usable CV builder.
-
-Status: ⬜ Not started.
-
-WEEK 3 — CV OUTPUT, PRIVACY & PUBLIC PROFILES
-DAY 15 — Professional CV Template
-
-Build Professional template
-
-Connect database data
-
-Display sections dynamically
-
-Test different CV lengths
-
-Deliverable: First complete CV template.
-
-Status: ⬜ Not started.
-
-DAY 16 — Modern & Classic Templates
-
-Build Modern template
-
-Build Classic template
-
-Connect both to CV system
-
-Test template switching
-
-Deliverable: Three working CV templates.
-
-Status: ⬜ Not started.
-
-DAY 17 — CV Preview
-
-Create CV preview page
-
-Preview selected template
-
-Preview complete CV
-
-Edit button
-
-Template switching
-
-Deliverable: Complete CV preview system.
-
-Status: ⬜ Not started.
-
-DAY 18 — PDF Generation
-
-Install/configure PDF generator
-
-Convert CV preview to PDF
-
-Download PDF
-
-Test one-page CV
-
-Test multi-page CV
-
-Deliverable: Working CV PDF generation.
-
-Status: ⬜ Not started.
-
-DAY 19 — Download Tracking
-
-Download tracking migration
-
-CvDownload model
-
-Record CV downloads
-
-Store user
-
-Store IP
-
-Store user agent
-
-Store download time
-
-Display download statistics
-
-Deliverable: Working download tracking.
-
-Status: 🟡 Database/model foundation complete.
-
-DAY 20 — Privacy Settings
-
-Privacy settings migration
-
-PrivacySetting model
-
-Privacy fields defined
-
-Build privacy settings page
-
-Email visibility
-
-Phone visibility
-
-Address visibility
-
-DOB visibility
-
-Gender visibility
-
-Education visibility
-
-Experience visibility
-
-Skills visibility
-
-Projects visibility
-
-Certifications visibility
-
-References visibility
-
-Apply privacy rules to public CV
-
-Deliverable: Complete privacy control system.
-
-Status: 🟡 Backend foundation complete; UI and integration pending.
-
-DAY 21 — Public CV Profiles
-
-Public profiles migration
-
-PublicProfile model
-
-Publish CV
-
-Create public profile
-
-Generate public slug
-
-Public CV page
-
-Apply privacy settings
-
-Activate/deactivate public profile
-
-Deliverable: Shareable public CV.
-
-Status: 🟡 Database/model foundation complete.
-
-WEEK 4 — QR, ANALYTICS, ADMIN & FINALIZATION
-DAY 22 — QR Code Generation
-
-QR code migration
-
-QRCode model
-
-Generate QR codes
-
-Connect QR to public profile
-
-Generate unique QR token
-
-Generate QR image
-
-Download QR
-
-Deliverable: Working QR code system.
-
-Status: 🟡 Database/model foundation complete.
-
-DAY 23 — QR Scanning
-
-QR scans migration
-
-QrScan model
-
-QR redirect
-
-Open public CV
-
-Record QR scan
-
-Device detection
-
-Browser detection
-
-Platform detection
-
-Deliverable: Working QR tracking.
-
-Status: 🟡 Database/model foundation complete.
-
-DAY 24 — Profile Analytics
-
-Profile views migration
-
-ProfileView model
-
-Track public profile views
-
-Display profile views
-
-Display QR scans
-
-Display CV downloads
-
-Basic analytics cards
-
-Deliverable: Client analytics dashboard.
-
-Status: 🟡 Database/model foundation complete.
-
-DAY 25 — Admin Dashboard
-
-Admin dashboard
-
-User statistics
-
-CV statistics
-
-Public profile statistics
-
-Download statistics
-
-QR statistics
-
-Deliverable: Functional admin dashboard.
-
-Status: ⬜ Not started.
-
-DAY 26 — Admin Management
-
-Manage users
-
-View users
-
-Activate/deactivate users
-
-Manage CV templates
-
-Activate/deactivate templates
-
-View public profiles
-
-Deliverable: Functional admin management.
-
-Status: ⬜ Not started.
-
-DAY 27 — Smart CV Features
-
-Professional summary assistance
-
-Experience description assistance
-
-Skill suggestions
-
-CV improvement suggestions
-
-Job-targeted CV concept
-
-Deliverable: First smart CV functionality.
-
-Status: ⬜ Not started.
-
-DAY 28 — Security & Validation
-
-API ownership checks
-
-API validation
-
-API error handling
-
-Sanctum authentication
-
-Review web authorization
-
-Review ownership checks
-
-Review public/private data
-
-Review file uploads
-
-Review authentication
-
-Review rate limiting
-
-Full security review
-
-Deliverable: Secure and stable application.
-
-Status: 🟡 Partially complete.
-
-DAY 29 — Testing & UI Polish
-
-Test registration
-
-Test login
-
-Test profile
-
-Test education
-
-Test experience
-
-Test skills
-
-Test projects
-
-Test certifications
-
-Test references
-
-Test CV creation
-
-Test templates
-
-Test preview
-
-Test PDF
-
-Test public profile
-
-Test QR
-
-Test analytics
-
-Fix bugs
-
-Improve responsive design
-
-Deliverable: Release-ready application.
-
-Status: ⬜ Final testing stage pending.
-
-DAY 30 — Deployment & Final Release
-
-Production configuration
-
-Production database
-
-Environment variables
-
-Storage configuration
-
-Build assets
-
-Database migration
-
-Seeder configuration
-
-SSL
-
-Domain
-
-Deploy application
-
-Final testing
-
-Backup strategy
-
-Final documentation
-
-Deliverable: LIVE CHAPU-CV PLATFORM.
-
-Status: ⬜ Not started.
-
-CURRENT BACKEND CHECKPOINT
-
-The following backend foundation is complete:
-
-Laravel 12 project
-
-MySQL database
-
-Migrations
-
-Models
-
-Relationships
-
-Seeders
-
-Required factories
-
-Helpers
-
-Sanctum authentication
-
-API exception handling
-
-API Resources
-
-API Controllers
-
-Session/token configuration
-
-php artisan optimize:clear
-
-Tinker helper testing
-
-Factory testing
-
-NEXT DEVELOPMENT PHASE
-
-The next development sequence is:
-
-API ROUTES
-↓
-API TESTING
-↓
-WEB / LIVEWIRE UI
-↓
-PROFILE MANAGEMENT
-↓
-EDUCATION
-↓
-EXPERIENCE
-↓
-SKILLS
-↓
-PROJECTS
-↓
-CERTIFICATIONS
-↓
-REFERENCES
-↓
-CV MANAGEMENT
-↓
-CV BUILDER
-↓
-CV TEMPLATES
-↓
-CV PREVIEW
-↓
+```text
+WEB / LIVEWIRE UI (profile → sections → CV builder)
+        ↓
+REFERENCE ENGINE + API
+        ↓
+CV TEMPLATES (Blade) + PREVIEW
+        ↓
 PDF GENERATION
-↓
-PUBLIC CV
-↓
-PRIVACY
-↓
-QR CODE
-↓
-ANALYTICS
-↓
-ADMIN
-↓
+        ↓
+PUBLIC CV + PRIVACY
+        ↓
+QR (server) + ANALYTICS
+        ↓
+ADMIN MANAGEMENT
+        ↓
 SMART FEATURES
-↓
-SECURITY
-↓
-TESTING
-↓
-DEPLOYMENT
-FINAL PRODUCT
-USER
+        ↓
+SECURITY REVIEW + TESTING
+        ↓
+DEPLOYMENT (Laravel + Flutter)
+```
 
-│
-├── Profile
-├── Education
-├── Experience
-├── Skills
-├── Projects
-├── Certifications
-└── References
-│
-↓
-CV BUILDER
-│
-↓
-CV TEMPLATE
-│
-↓
-CV PREVIEW
-│
-↓
-PDF DOWNLOAD
-│
-├── Download Tracking
-│
-↓
-PUBLIC CV
-│
-├── Privacy
-├── Public Link
-│
-↓
-QR CODE
-│
-↓
-QR ANALYTICS
-│
-↓
-DASHBOARD
-30-DAY TARGET
+---
 
+# FINAL PRODUCT FLOW
 
+```text
+USER (Web Blade / Flutter)
+        │
+        ├── Profile
+        ├── Education
+        ├── Experience
+        ├── Skills
+        ├── Projects
+        ├── Certifications
+        ├── Languages
+        └── References
+                │
+                ▼
+         Engines (shared)
+                │
+        ┌───────┴───────┐
+        ▼               ▼
+   API (Sanctum)    Web Controllers
+        │
+        ▼
+   Flutter / Web clients
+        │
+        ▼
+   CV Builder → Template → Preview → PDF
+        │
+        ▼
+   Public CV → Privacy → QR → Analytics → Dashboard
+```
+
+**30-DAY TARGET:** Live Chapu CV platform (Laravel API + web UI + Flutter app).

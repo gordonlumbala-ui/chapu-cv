@@ -1,12 +1,14 @@
 # 📄 Chap CV
 
-> **Smart CV & Resume Generation Platform built with Laravel and MySQL**
+> **Smart CV & Resume Generation Platform built with Laravel, MySQL, and Flutter**
 
-Chap CV is a web-based **CV and Resume Management System** designed to help users create, customize, manage, generate, download, and share professional CVs and resumes.
+Chap CV is a **CV and Resume Management System** designed to help users create, customize, manage, generate, download, and share professional CVs and resumes — on the **web** and on **mobile** (Flutter).
 
 Instead of creating every CV from scratch, Chap CV allows users to maintain their professional information in one centralized profile and use that information to generate different CVs according to their career, job application, academic, or professional needs.
 
 Chap CV also provides **customizable CV templates, shareable professional profiles, QR codes, privacy controls, and resume analytics**, making it more than a traditional CV generator.
+
+The Flutter app (`Chapu_cv_mobile`) talks to the same Laravel **Engines** layer through Sanctum-authenticated API endpoints.
 
 ---
 
@@ -18,6 +20,7 @@ Chap CV also provides **customizable CV templates, shareable professional profil
 - [How Chap CV Works](#-how-chap-cv-works)
 - [Technology Stack](#-technology-stack)
 - [System Architecture](#-system-architecture)
+- [Flutter Mobile App](#-flutter-mobile-app)
 - [Main Modules](#-main-modules)
 - [Database](#-database)
 - [Database Tables](#-database-tables)
@@ -965,26 +968,34 @@ This makes Chap CV useful as a **continuous professional profile management plat
 
 ## Backend
 
-- Laravel
-- PHP
+- Laravel 12
+- PHP 8.2+
+- Shared domain **Engines** (`app/Engines/`)
 
 ## Authentication
 
 - Laravel Jetstream
 - Laravel Fortify
-- Laravel Sanctum
+- Laravel Sanctum (API tokens for Flutter)
 
-## Frontend
+## Web Frontend
 
 - Laravel Livewire
 - Blade
-- HTML5
-- CSS3
-- JavaScript
+- HTML5 / CSS3 / JavaScript
+- Metronic admin/client layouts (in progress)
+
+## Mobile
+
+- Flutter 3 (`Chapu_cv_mobile`)
+- Provider
+- `http` + SharedPreferences
+- Targets: Android, iOS, Flutter Web
 
 ## Database
 
-- MySQL
+- MySQL (production target)
+- SQLite supported for local/dev
 
 ## Development Tools
 
@@ -992,6 +1003,7 @@ This makes Chap CV useful as a **continuous professional profile management plat
 - NPM
 - Vite
 - Git
+- Flutter SDK
 
 ## PDF Generation
 
@@ -999,44 +1011,113 @@ A Laravel-compatible PDF generation package can be integrated for generating dow
 
 ## QR Code
 
-A Laravel-compatible QR code generation package can be integrated for generating profile and CV QR codes.
+Mobile generates a local QR payload today; server-side QR packages can be integrated for public profile links.
 
 ---
 
 # 🏗️ System Architecture
 
-Chap CV follows the Laravel MVC architecture with dedicated services for complex operations.
+Chap CV uses Laravel MVC with a shared **Engines** layer so API and web controllers reuse the same business logic. Flutter consumes the Sanctum API.
 
 ```text
-                         USER
-                           │
-                           ▼
-                    WEB INTERFACE
-                           │
-                           ▼
-                        ROUTES
-                           │
-                           ▼
-                     CONTROLLERS
-                           │
-              ┌────────────┼────────────┐
-              ▼            ▼            ▼
-           REQUESTS      SERVICES      MODELS
-                            │            │
-                            │            ▼
-                            │          MySQL
-                            │
-                            ▼
-                    CV GENERATION
-                            │
-                  ┌─────────┴─────────┐
-                  ▼                   ▼
-                 PDF                 QR
-                  │                   │
-                  └─────────┬─────────┘
-                            ▼
-                           USER
+                 ┌─────────────────┐
+                 │  Flutter Mobile │
+                 │  (Android/iOS/  │
+                 │   Flutter Web)  │
+                 └────────┬────────┘
+                          │ Sanctum Bearer token
+                          ▼
+                 ┌─────────────────┐
+                 │   API Routes    │
+                 │  (routes/api)   │
+                 └────────┬────────┘
+                          │
+     Web Blade ───────────┼─────────── Controllers (Api + Web)
+                          │
+                          ▼
+                 ┌─────────────────┐
+                 │     Engines     │
+                 │  (domain logic) │
+                 └────────┬────────┘
+                          │
+                          ▼
+                      Models / DB
+                          │
+              ┌───────────┴───────────┐
+              ▼                       ▼
+         CV Generation            QR / Public
+         (PDF later)              (later)
 ```
+
+Key Engines include: `CvEngine`, `ProfileEngine`, `EducationEngine`, `ExperienceEngine`, `SkillEngine`, `ProjectEngine`, `CertificationEngine`, `LanguageEngine`, `CvTemplateEngine`, `MobileCvSyncEngine`.
+
+---
+
+# 📱 Flutter Mobile App
+
+The mobile client lives in **`Chapu_cv_mobile/`** and is part of this monorepo.
+
+## What it does today
+
+- Landing, onboarding, home, contact
+- Register / login / logout against Laravel Sanctum
+- Create and edit a CV form
+- Sync CV to the backend via Engines (`POST /api/mobile/cv/sync`)
+- Load CV from the backend (`GET /api/mobile/cv`)
+- Preview CV and generate a shareable QR payload
+- Run on Android emulator and **Flutter Web** (Chrome)
+
+## API endpoints used by Flutter
+
+| Method | Path | Purpose |
+|--------|------|---------|
+| POST | `/api/register` | Create client account + token |
+| POST | `/api/login` | Login + token |
+| POST | `/api/logout` | Revoke token |
+| GET | `/api/mobile/cv` | Load flat CV for the mobile form |
+| POST | `/api/mobile/cv/sync` | Sync profile + CV + sections |
+
+Resource APIs (`/api/cvs`, `/api/educations`, `/api/experiences`, `/api/skills`, …) are also available for future structured mobile editors.
+
+## Run Flutter (with local API)
+
+Terminal 1 — Laravel:
+
+```bash
+php artisan serve --host=127.0.0.1 --port=8000
+```
+
+Terminal 2 — Flutter Web:
+
+```bash
+cd Chapu_cv_mobile
+flutter pub get
+flutter run -d chrome --web-hostname=127.0.0.1 --web-port=5555
+```
+
+Open: `http://127.0.0.1:5555`
+
+Android emulator (default API host `10.0.2.2`):
+
+```bash
+cd Chapu_cv_mobile
+flutter run
+```
+
+Custom API URL:
+
+```bash
+flutter run -d chrome --dart-define=API_BASE_URL=http://127.0.0.1:8000/api
+```
+
+## Seeded login for mobile testing
+
+```text
+Email:    client@chapcv.com
+Password: 12345678
+```
+
+See also [`Blueprint.md`](Blueprint.md) for the full day-by-day checklist (including Flutter milestones).
 
 ---
 
@@ -1105,12 +1186,13 @@ CvTemplateSeeder
 
 Before installing Chap CV, make sure the following are installed:
 
-- PHP
+- PHP 8.2+
 - Composer
-- MySQL
+- MySQL (or use SQLite for local/dev)
 - Node.js
 - NPM
 - Git
+- Flutter SDK (for `Chapu_cv_mobile`)
 
 A compatible web server such as Apache/Nginx can also be used.
 
@@ -1250,13 +1332,14 @@ npm run build
 Start Laravel:
 
 ```bash
-php artisan serve
+php artisan serve --host=127.0.0.1 --port=8000
 ```
 
-The application will normally be available at:
+The web application and API will normally be available at:
 
 ```text
 http://127.0.0.1:8000
+API base: http://127.0.0.1:8000/api
 ```
 
 During frontend development, keep Vite running:
@@ -1265,54 +1348,62 @@ During frontend development, keep Vite running:
 npm run dev
 ```
 
+### Flutter mobile / web client
+
+```bash
+cd Chapu_cv_mobile
+flutter pub get
+flutter run -d chrome --web-hostname=127.0.0.1 --web-port=5555
+```
+
+Flutter Web: `http://127.0.0.1:5555`  
+Sign in with a seeded client account to load Engine-backed CV data.
+
 ---
 
 # 📂 Project Structure
 
-A simplified Laravel structure:
-
 ```text
-chap-cv/
+chapu-cv/
 │
 ├── app/
+│   ├── Engines/                 # Shared domain logic (API + web)
+│   │   └── Concerns/
 │   ├── Http/
 │   │   ├── Controllers/
+│   │   │   ├── Api/             # JSON API (Flutter + clients)
+│   │   │   └── *.php            # Web controllers (backend)
 │   │   ├── Middleware/
-│   │   └── Requests/
-│   │
+│   │   ├── Requests/
+│   │   └── Resources/
 │   ├── Models/
-│   │
-│   └── Services/
+│   ├── Helpers/
+│   └── Providers/
 │
-├── bootstrap/
-│
-├── config/
+├── Chapu_cv_mobile/             # Flutter app (Android / iOS / Web)
+│   ├── lib/
+│   │   ├── core/
+│   │   ├── models/
+│   │   ├── screens/
+│   │   ├── services/            # ApiClient, AuthStore, CvStore
+│   │   └── theme/
+│   ├── android/ ios/ web/
+│   └── pubspec.yaml
 │
 ├── database/
 │   ├── factories/
 │   ├── migrations/
 │   └── seeders/
 │
-├── public/
-│
-├── resources/
-│   ├── css/
-│   ├── js/
-│   └── views/
-│
+├── resources/views/
 ├── routes/
-│   ├── web.php
-│   └── api.php
+│   ├── api.php
+│   └── web.php
 │
-├── storage/
-│
-├── tests/
-│
-├── .env
-├── .env.example
+├── Blueprint.md                 # 30-day plan with progress checkboxes
+├── README.md
 ├── composer.json
-├── package.json
-└── README.md
+└── package.json
 ```
 
 ---
@@ -1480,13 +1571,18 @@ Future templates may include:
 
 ## 📱 Mobile Application
 
-A mobile application could allow users to:
+The Flutter app in `Chapu_cv_mobile/` is already attached to the Laravel Engines API. Users can:
 
-- Update profiles
-- Generate CVs
-- View QR codes
-- Share profiles
-- Download resumes
+- [x] Register / sign in
+- [x] Update profile fields through CV sync
+- [x] Create and edit a CV on device
+- [x] Sync CV data to the server
+- [x] Preview the CV
+- [x] Generate a local QR payload
+- [ ] Open server public-profile QR links
+- [ ] Download PDF resumes from the API
+
+See [Flutter Mobile App](#-flutter-mobile-app) and [`Blueprint.md`](Blueprint.md).
 
 ---
 

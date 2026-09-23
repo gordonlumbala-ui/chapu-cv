@@ -33,6 +33,17 @@ class User extends Authenticatable
         'password',
         'role',
         'is_active',
+        'phone',
+        'professional_title',
+        'summary',
+        'address',
+        'city',
+        'country',
+        'date_of_birth',
+        'gender',
+        'website',
+        'linkedin_url',
+        'github_url',
     ];
 
     /**
@@ -112,6 +123,8 @@ public function socialLinks()
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'date_of_birth' => 'date',
+            'is_active' => 'boolean',
         ];
     }
 }

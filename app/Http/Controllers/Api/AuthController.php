@@ -3,17 +3,44 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
-use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules\Password;
 
 class AuthController extends Controller
 {
-    /**
-     * Login user and return Sanctum API token.
-     */
+    public function register(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255', 'unique:users,email'],
+            'password' => ['required', 'confirmed', Password::defaults()],
+        ]);
+
+        $user = User::create([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'password' => $validated['password'],
+            'role' => 'client',
+            'is_active' => true,
+        ]);
+
+        $token = $user->createToken('flutter-app')->plainTextToken;
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Registration successful.',
+            'data' => [
+                'user' => $user,
+                'token' => $token,
+                'token_type' => 'Bearer',
+            ],
+        ], 201);
+    }
+
     public function login(Request $request): JsonResponse
     {
         $credentials = $request->validate([
@@ -23,14 +50,14 @@ class AuthController extends Controller
 
         $user = User::where('email', $credentials['email'])->first();
 
-        if (!$user || !Hash::check($credentials['password'], $user->password)) {
+        if (! $user || ! Hash::check($credentials['password'], $user->password)) {
             return response()->json([
                 'success' => false,
                 'message' => 'Invalid email or password.',
             ], 401);
         }
 
-        if (isset($user->is_active) && !$user->is_active) {
+        if (isset($user->is_active) && ! $user->is_active) {
             return response()->json([
                 'success' => false,
                 'message' => 'Your account has been deactivated.',
@@ -50,9 +77,6 @@ class AuthController extends Controller
         ]);
     }
 
-    /**
-     * Logout the current API user.
-     */
     public function logout(Request $request): JsonResponse
     {
         $request->user()->currentAccessToken()?->delete();

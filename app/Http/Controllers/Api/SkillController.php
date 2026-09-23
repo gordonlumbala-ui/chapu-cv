@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Engines\SkillEngine;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\SkillResource;
 use App\Models\Skill;
@@ -9,29 +10,16 @@ use Illuminate\Http\Request;
 
 class SkillController extends Controller
 {
+    public function __construct(protected SkillEngine $engine) {}
+
     public function index(Request $request)
     {
-        $skills = $request->user()
-            ->skills()
-            ->orderBy('category')
-            ->orderBy('name')
-            ->get();
-
-        return SkillResource::collection($skills);
+        return SkillResource::collection($this->engine->listFor($request->user()));
     }
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'category' => ['nullable', 'string', 'max:255'],
-            'level' => ['nullable', 'string', 'max:255'],
-            'percentage' => ['nullable', 'integer', 'min:0', 'max:100'],
-        ]);
-
-        $skill = $request->user()
-            ->skills()
-            ->create($validated);
+        $skill = $this->engine->create($request->user(), $request->all());
 
         return (new SkillResource($skill))
             ->additional([
@@ -44,51 +32,22 @@ class SkillController extends Controller
 
     public function show(Request $request, Skill $skill)
     {
-        if ($skill->user_id !== $request->user()->id) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Skill not found.',
-            ], 404);
-        }
-
-        return new SkillResource($skill);
+        return new SkillResource($this->engine->findFor($request->user(), $skill));
     }
 
     public function update(Request $request, Skill $skill)
     {
-        if ($skill->user_id !== $request->user()->id) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Skill not found.',
-            ], 404);
-        }
+        $skill = $this->engine->update($request->user(), $skill, $request->all());
 
-        $validated = $request->validate([
-            'name' => ['sometimes', 'required', 'string', 'max:255'],
-            'category' => ['nullable', 'string', 'max:255'],
-            'level' => ['nullable', 'string', 'max:255'],
-            'percentage' => ['nullable', 'integer', 'min:0', 'max:100'],
+        return (new SkillResource($skill))->additional([
+            'success' => true,
+            'message' => 'Skill updated successfully.',
         ]);
-
-        $skill->update($validated);
-
-        return (new SkillResource($skill))
-            ->additional([
-                'success' => true,
-                'message' => 'Skill updated successfully.',
-            ]);
     }
 
     public function destroy(Request $request, Skill $skill)
     {
-        if ($skill->user_id !== $request->user()->id) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Skill not found.',
-            ], 404);
-        }
-
-        $skill->delete();
+        $this->engine->delete($request->user(), $skill);
 
         return response()->json([
             'success' => true,
